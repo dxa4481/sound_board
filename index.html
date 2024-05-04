@@ -57,7 +57,6 @@
             <!-- Buttons will be generated here by JavaScript -->
         </div>
     </div>
-
     <script>
         const buttonConfig = [
             { label: "Thunder", sound: "sounds/thunder/thunder.mp3", img: "sounds/thunder/thunder.png" },
@@ -65,19 +64,10 @@
             { label: "Evil Laugh", sound: "sounds/evil_laugh/evil_laugh.mp3", img: "sounds/evil_laugh/evil_laugh.png" },
             { label: "Tremelo", sound: "sounds/tremelo/tremelo.mp3", img: "sounds/tremelo/tremelo.png" },
             { label: "Intro", sound: "sounds/intro/intro.mp3", img: "sounds/intro/intro.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" },
-            { label: "Placeholder", sound: "placeholder.mp3", img: "placeholder.png" }
+            // Add more button configurations as needed
         ];
 
+        let activeAudios = []; // Array to hold active audio elements
 
         const createButton = (config) => {
             const button = document.createElement('button');
@@ -96,17 +86,38 @@
 
             button.onclick = () => {
                 const audio = new Audio(config.sound);
+                activeAudios.push(audio);
                 audio.play();
+                audio.onended = () => {
+                    // Remove audio from array when it finishes playing
+                    activeAudios = activeAudios.filter(a => a !== audio);
+                };
             };
 
             return button;
         };
 
-        const buttonGrid = document.querySelector('.button-grid');
-        buttonConfig.forEach(config => {
-            buttonGrid.appendChild(createButton(config));
-        });
+        const stopAllSounds = () => {
+            activeAudios.forEach(audio => audio.pause());
+            activeAudios.length = 0; // Clear the array after stopping all sounds
+        };
+
+        const addButtonGrid = () => {
+            const buttonGrid = document.querySelector('.button-grid');
+            buttonConfig.forEach(config => {
+                buttonGrid.appendChild(createButton(config));
+            });
+
+            const stopButton = document.createElement('button');
+            stopButton.textContent = "Stop All Sounds";
+            stopButton.classList.add('btn', 'btn-danger', 'btn-block');
+            stopButton.onclick = stopAllSounds;
+            buttonGrid.appendChild(stopButton);
+        };
+
+        addButtonGrid(); // Initialize the button grid and stop button on page load
     </script>
+
 </body>
 </html>
 
